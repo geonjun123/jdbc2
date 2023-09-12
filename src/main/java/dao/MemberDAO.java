@@ -73,4 +73,49 @@ public class MemberDAO {
 		}
 		return n;
 	}
+	public int deleteMember(String userId)
+	{
+		int n = 0;
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		String sql = "delete from member where userid=?";
+		
+		conn = jdbcUtil.getConnection();
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, userId);
+			n = pstmt.executeUpdate();
+		} catch(SQLException e)
+		{
+			e.printStackTrace();
+		}finally {
+			jdbcUtil.close(conn, pstmt);
+		}
+		return n;
+	}
+	public boolean getMemberPwd(String id, String pwd) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "select userpwd from member where userid=?";
+		boolean result = false;
+		
+		conn = jdbcUtil.getConnection();
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, id);
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				if(pwd.equals(rs.getString("userpwd")))
+					result = true;
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+			}finally {
+				jdbcUtil.close(conn, pstmt, rs);
+		}
+		return result;
+	}
 }
